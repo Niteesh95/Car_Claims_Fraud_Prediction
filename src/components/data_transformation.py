@@ -9,26 +9,34 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder,StandardScaler
+from sklearn.model_selection import train_test_split
 
 from src.exception import CustomException
 from src.logger import logging
 import os
 
 from src.utils import save_object
+# from src.components.data_ingestion import DataIngestionConfig,DataIngestion
 
 @dataclass
 class DataTransformationConfig:
     preprocessor_obj_file_path=os.path.join('artifacts',"proprocessor.pkl")
+    train_data_path: str=os.path.join('artifacts', "train.csv")
+    test_data_path: str=os.path.join('artifacts', "test.csv")
+    transformed_data_path: str=os.path.join('artifacts', "transformed_data.csv")
 
 class DataTransformation:
     def __init__(self):
         self.data_transformation_config = DataTransformationConfig()
 
-    def initiate_data_transformation(self):
+    def initiate_data_transformation(self, raw_data_path):
         try:
-            train_df = pd.read_csv('notebooks\data\carclaims.csv')
+            # ingestion_config = DataIngestionConfig()
+            train_df = pd.read_csv(raw_data_path)
             # test_df = pd.read_csv(test_path)
-            logging.info("Data read completed")
+            logging.info("Data read completed - data transformation")
+
+            # train_df.to_csv(ingestion_config.raw_data_path,index=False,header=True)
 
             logging.info("Data Cleaning and Feature Engineering")
             target_column = 'FraudFound'
@@ -60,7 +68,17 @@ class DataTransformation:
 
             # input_feature_train_df=main_df.drop(columns=[target_column],axis=1)
             # target_feature_train_df=main_df[target_column]
+            os.makedirs(os.path.dirname(self.data_transformation_config.transformed_data_path), exist_ok=True)
+            main_df.to_csv(self.data_transformation_config.transformed_data_path, index=False, header=True)
 
-            return main_df
+            logging.info("train-test split initiated")
+            train_set, test_set = train_test_split(main_df, test_size=0.2, random_state=15)
+            
+            train_set.to_csv(self.data_transformation_config.train_data_path, index=False, header=True)
+            test_set.to_csv(self.data_transformation_config.test_data_path, index=False, header=True)
+            logging.info("Data ingestion completed")
+
+            return (self.data_transformation_config.train_data_path,
+                    self.data_transformation_config.test_data_path)
         except Exception as e:
             raise CustomException(e, sys)
