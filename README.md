@@ -42,7 +42,7 @@ As there are thousands of claims made, it is impossible to validate each and eve
 In the below figure, there are 3855 claims sent to the model. Manually, it will take a lot of time to validate all the 3855 claims, but as you can see the model predicted frauds (i.e 1's) is just 7 and the frauds predicted as non-frauds is 224. So a total of 231 records are to be validated, by this the number has been reduced drastically and help the business to make decisions faster.
 
 <p align='center'>
-  <img src="images/0g.jpg" width=60% height=40%/>
+  <img src="images/06.jpg" width=60% height=40%/>
 </p>
 
 ## How to run on local
