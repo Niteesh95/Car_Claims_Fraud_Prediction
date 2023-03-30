@@ -20,10 +20,10 @@ from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:
-    preprocessor_obj_file_path=os.path.join('artifacts',"proprocessor.pkl")
-    train_data_path: str=os.path.join('artifacts', "train.csv")
-    test_data_path: str=os.path.join('artifacts', "test.csv")
-    transformed_data_path: str=os.path.join('artifacts', "transformed_data.csv")
+    preprocessor_obj_file_path=os.path.join('artifacts\data',"proprocessor.pkl")
+    train_data_path: str=os.path.join('artifacts\data', "train.csv")
+    test_data_path: str=os.path.join('artifacts\data', "test.csv")
+    transformed_data_path: str=os.path.join('artifacts\data', "transformed_data.csv")
 
 class DataTransformation:
     def __init__(self):
@@ -41,9 +41,6 @@ class DataTransformation:
             logging.info("Data Cleaning and Feature Engineering")
             target_column = 'FraudFound'
 
-            train_df['Age_Group'] = pd.cut(train_df['Age'],
-                                     bins=[0,9,19,29,39,49,59,69,79,89],
-                                     labels=["0-9", "10-19","20-29","30-39","40-49","50-59", "60-69","70-79","80-89"])
             train_df.drop(['WeekOfMonth', 'DayOfWeek', "Make", 'DayOfWeekClaimed', 'MonthClaimed', 'WeekOfMonthClaimed', 'PolicyNumber',
                      'RepNumber', 'PastNumberOfClaims', 'DriverRating', 'Year', 'Month', 'VehicleCategory', 'BasePolicy'], inplace=True, axis=1)
             
@@ -59,7 +56,7 @@ class DataTransformation:
             cat_cols['AgentType'].replace(['External', 'Internal'],[1, 0], inplace=True)
             cat_cols['FraudFound'].replace(['No', 'Yes'],[0, 1], inplace=True)
             cat_dummies = pd.get_dummies(cat_cols[['MaritalStatus', 'PolicyType', 'VehiclePrice', 'Days:Policy-Accident', 'Days:Policy-Claim',
-                        'AgeOfVehicle', 'NumberOfSuppliments', 'AddressChange-Claim', 'NumberOfCars', 'Age_Group']])
+                        'AgeOfVehicle', 'NumberOfSuppliments', 'AddressChange-Claim', 'NumberOfCars']])
             a = cat_cols[['AccidentArea', 'Sex', 'PoliceReportFiled', 'Fault', 'WitnessPresent', 'AgentType', 'FraudFound']]
             cat_df = pd.concat([cat_dummies, a], axis=1)
             main_df = pd.concat([cat_df, num_cols], axis=1)
